@@ -1,0 +1,6 @@
+name: PaperPluginTemplate
+version: '1.0.0'
+main: me.truec0der.paperplugintemplate.PaperPluginTemplate
+api-version: '1.21'
+authors: [ TRUEC0DER ]
+website: https://github.com/TRUEC0DER

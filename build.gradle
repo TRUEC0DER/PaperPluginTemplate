@@ -1,0 +1,119 @@
+import xyz.jpenilla.runtask.task.AbstractRun
+import groovy.json.JsonSlurper
+
+plugins {
+    id 'java'
+    id 'xyz.jpenilla.run-paper' version '2.3.1'
+    id "com.modrinth.minotaur" version '2.+'
+}
+
+group = 'me.truec0der'
+version = '1.0.0'
+
+repositories {
+    mavenCentral()
+    maven {
+        name = "papermc-repo"
+        url = "https://repo.papermc.io/repository/maven-public/"
+    }
+    maven {
+        name = "sonatype"
+        url = "https://oss.sonatype.org/content/groups/public/"
+    }
+}
+
+dependencies {
+    compileOnly("io.papermc.paper:paper-api:${readPluginProperty("paper.plugin_version", "1.21.4-R0.1-SNAPSHOT")}")
+}
+
+def targetJavaVersion = readPluginProperty("java.version", 21) as Integer
+java {
+    def javaVersion = JavaVersion.toVersion(targetJavaVersion)
+    sourceCompatibility = javaVersion
+    targetCompatibility = javaVersion
+    if (JavaVersion.current() < javaVersion) {
+        toolchain.languageVersion = JavaLanguageVersion.of(targetJavaVersion)
+    }
+}
+
+tasks.withType(JavaCompile).configureEach {
+    options.encoding = 'UTF-8'
+
+    if (targetJavaVersion >= 10 || JavaVersion.current().isJava10Compatible()) {
+        options.release.set(targetJavaVersion)
+    }
+}
+
+boolean hasEnhancedHotswap = readPluginProperty("java.allow_enhanced_hotswap", true)
+if (hasEnhancedHotswap) {
+    tasks.withType(AbstractRun.class).configureEach {
+        javaLauncher = javaToolchains.launcherFor {
+            vendor = JvmVendorSpec.JETBRAINS
+            languageVersion = JavaLanguageVersion.of(21)
+        }
+        jvmArgs("-XX:+AllowEnhancedClassRedefinition")
+    }
+}
+
+tasks {
+    runServer {
+        minecraftVersion(readPluginProperty("paper.server_version", "1.21.4") as String)
+    }
+}
+
+def modrinthProjectId = readPluginProperty("modrinth.project_id", "paper-plugin-template") as String
+def modrinthVersionNumber = readPluginProperty("modrinth.version_number", "1.0.0") as String
+def modrinthVersionType = readPluginProperty("modrinth.version_type", "release") as String
+def modrinthUploadFile = readPluginProperty("modrinth.upload_file", "jar") as String
+def modrinthGameVersions = readPluginProperty("modrinth.game_versions", ["1.21.4"]) as List<String>
+def modrinthLoaders = readPluginProperty("modrinth.loaders", ["paper"]) as List<String>
+def modrinthDependencies = readPluginProperty("modrinth.dependencies", [:]) as Map<String, List<Map<String, String>>>
+
+modrinth {
+    token = System.getenv("MODRINTH_TOKEN")
+    projectId = modrinthProjectId
+    versionNumber = modrinthVersionNumber
+    versionType = modrinthVersionType
+    uploadFile = modrinthUploadFile
+    gameVersions = modrinthGameVersions
+    loaders = modrinthLoaders
+
+    addModrinthDependencies(modrinthDependencies, "optional", optional)
+    addModrinthDependencies(modrinthDependencies, "required", required)
+    addModrinthDependencies(modrinthDependencies, "incompatible", incompatible)
+    addModrinthDependencies(modrinthDependencies, "embedded", embedded)
+}
+
+processResources {
+    def props = [version: version]
+    inputs.properties props
+    filteringCharset 'UTF-8'
+    filesMatching('plugin.yml') {
+        expand props
+    }
+}
+
+def readPluginProperty(String key, def defaultValue = "") {
+    def jsonFile = file("plugin.json")
+
+    if (!jsonFile.exists()) {
+        def jsonContent = """{
+            "$key": "$defaultValue"
+        }"""
+        jsonFile.text = jsonContent
+    }
+
+    def json = new JsonSlurper().parse(jsonFile)
+    def value = json."$key" ?: defaultValue
+    return value
+}
+
+static def addModrinthDependencies(dependencies, category, handler) {
+    dependencies[category]?.each { dep ->
+        if (dep["type"] == "version") {
+            handler.version dep["name"], dep["version"]
+        } else if (dep["type"] == "project") {
+            handler.project dep["name"]
+        }
+    }
+}

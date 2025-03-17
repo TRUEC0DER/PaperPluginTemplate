@@ -1,0 +1,41 @@
+{
+  "java": {
+    "version": 21, // Target java version
+    "allow_enhanced_hotswap": true // Enable hot code swapping without restart
+  },
+  "paper": {
+    "server_version": "1.21.4", // Version of run server
+    "plugin_version": "1.21.4-R0.1-SNAPSHOT" // Version of Paper API
+  },
+  "modrinth": { // Modrinth publishing options. You need to set MODRINTH_TOKEN environment variable to publish
+    "project_id": "paper-plugin-template", // Can be the project ID or the slug
+    "version_number": "1.0.0", // Will fail if Modrinth has this version already
+    "version_type": "release", // Can be `release`, `beta`, `alpha`
+    "upload_file": "jar",
+    "game_versions": [ // Must be an array, even with only one version
+      "1.21.4"
+    ],
+    "loaders": [ // Must also be an array
+      "paper",
+      "purpur",
+      "folia"
+    ],
+    "dependencies": { // A special DSL for creating dependencies
+    // scope.type
+    // The scope can be `required`, `optional`, `incompatible`, or `embedded`
+    // The type can either be `project` or `version`
+      "optional": [
+        {"type": "version", "name": "trueportals", "version": "1.3.1"}
+      ],
+      "required": [
+        {"type": "project", "name": "mwl"}
+      ],
+      "incompatible": [
+        {"type": "version", "name": "trueportals", "version":  "1.1.0"}
+      ],
+      "embedded": [
+        {"type": "project", "name":  "mwl"}
+      ]
+    }
+  }
+}

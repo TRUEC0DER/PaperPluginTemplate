@@ -1,0 +1,38 @@
+{
+  "java": {
+    "version": 21,
+    "allow_enhanced_hotswap": true
+  },
+  "paper": {
+    "server_version": "1.21.4",
+    "plugin_version": "1.21.4-R0.1-SNAPSHOT"
+  },
+  "modrinth": {
+    "project_id": "paper-plugin-template",
+    "version_number": "1.0.0",
+    "version_type": "release",
+    "upload_file": "jar",
+    "game_versions": [
+      "1.21.4"
+    ],
+    "loaders": [
+      "paper",
+      "purpur",
+      "folia"
+    ],
+    "dependencies": {
+      "optional": [
+        {"type": "version", "name": "trueportals", "version": "1.3.1"}
+      ],
+      "required": [
+        {"type": "project", "name": "mwl"}
+      ],
+      "incompatible": [
+        {"type": "version", "name": "trueportals", "version":  "1.1.0"}
+      ],
+      "embedded": [
+        {"type": "project", "name":  "mwl"}
+      ]
+    }
+  }
+}
