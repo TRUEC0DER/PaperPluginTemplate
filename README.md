@@ -7,6 +7,7 @@ This repository provides a template for creating Minecraft plugins for the **Pap
 - **Gradle Build System**: Built with Gradle for easy dependency management and plugin building.
 - **Test Server**: Includes a built-in mechanism for launching a test server to run your plugin and test changes immediately.
 - **Plugin Configuration**: Configure plugin settings via `plugin.json` (e.g., Java version, Paper server version, Modrinth publishing options).
+- **Lombok Support**: Integrated Lombok for reducing boilerplate code and simplifying development.
 
 ### Example Configuration (plugin.json):
 ```json5
