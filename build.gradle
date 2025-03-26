@@ -8,7 +8,10 @@ plugins {
 }
 
 group = 'me.truec0der'
-version = '1.0.0'
+
+String pluginName = readPluginProperty("plugin.name", "PaperPluginTemplate") as String
+String pluginVersion = readPluginProperty("plugin.version", "1.0.0") as String
+String pluginApiVersion = readPluginProperty("plugin.api_version", "1.21") as String
 
 repositories {
     mavenCentral()
@@ -22,12 +25,15 @@ repositories {
     }
 }
 
-String paperPluginVersion = readPluginProperty("paper.plugin_version", "1.21.4-R0.1-SNAPSHOT");
-String paperServerVersion = readPluginProperty("paper.server_version", "1.21.4");
+String paperPaperVersion = readPluginProperty("paper.paper_version", "1.21.4-R0.1-SNAPSHOT")
+String paperServerVersion = readPluginProperty("paper.server_version", "1.21.4")
 def targetJavaVersion = readPluginProperty("java.version", 21) as Integer
 
 dependencies {
-    compileOnly("io.papermc.paper:paper-api:${paperPluginVersion}")
+    compileOnly("io.papermc.paper:paper-api:${paperPaperVersion}")
+
+    compileOnly("org.projectlombok:lombok:1.18.36")
+    annotationProcessor("org.projectlombok:lombok:1.18.36")
 }
 
 java {
@@ -62,6 +68,11 @@ tasks {
     runServer {
         minecraftVersion(paperServerVersion)
     }
+
+    jar {
+        archiveBaseName.set(pluginName)
+        archiveVersion.set(pluginVersion)
+    }
 }
 
 String modrinthProjectId = readPluginProperty("modrinth.project_id", "paper-plugin-template")
@@ -88,7 +99,7 @@ modrinth {
 }
 
 processResources {
-    def props = [version: version]
+    def props = [pluginName: pluginName, pluginVersion: pluginVersion, pluginApiVersion: pluginApiVersion]
     inputs.properties props
     filteringCharset 'UTF-8'
     filesMatching('plugin.yml') {

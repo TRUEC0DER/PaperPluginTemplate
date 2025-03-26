@@ -3,9 +3,14 @@
     "version": 21,
     "allow_enhanced_hotswap": true
   },
+  "plugin": {
+    "name": "PaperPluginTemplate",
+    "version": "1.0.0",
+    "api_version": "1.21"
+  },
   "paper": {
     "server_version": "1.21.4",
-    "plugin_version": "1.21.4-R0.1-SNAPSHOT"
+    "paper_version": "1.21.4-R0.1-SNAPSHOT"
   },
   "modrinth": {
     "project_id": "paper-plugin-template",
