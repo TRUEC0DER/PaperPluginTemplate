@@ -22,11 +22,14 @@ repositories {
     }
 }
 
+String paperPluginVersion = readPluginProperty("paper.plugin_version", "1.21.4-R0.1-SNAPSHOT");
+String paperServerVersion = readPluginProperty("paper.server_version", "1.21.4");
+def targetJavaVersion = readPluginProperty("java.version", 21) as Integer
+
 dependencies {
-    compileOnly("io.papermc.paper:paper-api:${readPluginProperty("paper.plugin_version", "1.21.4-R0.1-SNAPSHOT")}")
+    compileOnly("io.papermc.paper:paper-api:${paperPluginVersion}")
 }
 
-def targetJavaVersion = readPluginProperty("java.version", 21) as Integer
 java {
     def javaVersion = JavaVersion.toVersion(targetJavaVersion)
     sourceCompatibility = javaVersion
@@ -49,7 +52,7 @@ if (hasEnhancedHotswap) {
     tasks.withType(AbstractRun.class).configureEach {
         javaLauncher = javaToolchains.launcherFor {
             vendor = JvmVendorSpec.JETBRAINS
-            languageVersion = JavaLanguageVersion.of(21)
+            languageVersion = JavaLanguageVersion.of(targetJavaVersion)
         }
         jvmArgs("-XX:+AllowEnhancedClassRedefinition")
     }
@@ -57,17 +60,17 @@ if (hasEnhancedHotswap) {
 
 tasks {
     runServer {
-        minecraftVersion(readPluginProperty("paper.server_version", "1.21.4") as String)
+        minecraftVersion(paperServerVersion)
     }
 }
 
-def modrinthProjectId = readPluginProperty("modrinth.project_id", "paper-plugin-template") as String
-def modrinthVersionNumber = readPluginProperty("modrinth.version_number", "1.0.0") as String
-def modrinthVersionType = readPluginProperty("modrinth.version_type", "release") as String
-def modrinthUploadFile = readPluginProperty("modrinth.upload_file", "jar") as String
-def modrinthGameVersions = readPluginProperty("modrinth.game_versions", ["1.21.4"]) as List<String>
-def modrinthLoaders = readPluginProperty("modrinth.loaders", ["paper"]) as List<String>
-def modrinthDependencies = readPluginProperty("modrinth.dependencies", [:]) as Map<String, List<Map<String, String>>>
+String modrinthProjectId = readPluginProperty("modrinth.project_id", "paper-plugin-template")
+String modrinthVersionNumber = readPluginProperty("modrinth.version_number", "1.0.0")
+String modrinthVersionType = readPluginProperty("modrinth.version_type", "release")
+String modrinthUploadFile = readPluginProperty("modrinth.upload_file", "jar")
+List<String> modrinthGameVersions = readPluginProperty("modrinth.game_versions", ["1.21.4"]) as List<String>
+List<String> modrinthLoaders = readPluginProperty("modrinth.loaders", ["paper"]) as List<String>
+Map<String, List<Map<String, String>>> modrinthDependencies = readPluginProperty("modrinth.dependencies", [:]) as Map<String, List<Map<String, String>>>
 
 modrinth {
     token = System.getenv("MODRINTH_TOKEN")
@@ -96,16 +99,14 @@ processResources {
 def readPluginProperty(String key, def defaultValue = "") {
     def jsonFile = file("plugin.json")
 
-    if (!jsonFile.exists()) {
-        def jsonContent = """{
-            "$key": "$defaultValue"
-        }"""
-        jsonFile.text = jsonContent
-    }
+    if (!jsonFile.exists()) return defaultValue
 
     def json = new JsonSlurper().parse(jsonFile)
-    def value = json."$key" ?: defaultValue
-    return value
+
+    def keys = key.split("\\.")
+    def value = keys.inject(json) { acc, k -> acc instanceof Map ? acc[k] : null }
+
+    return value != null ? value : defaultValue
 }
 
 static def addModrinthDependencies(dependencies, category, handler) {
