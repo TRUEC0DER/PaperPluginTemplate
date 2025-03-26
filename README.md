@@ -35,16 +35,16 @@ This repository provides a template for creating Minecraft plugins for the **Pap
       // The scope can be `required`, `optional`, `incompatible`, or `embedded`
       // The type can either be `project` or `version`
       "optional": [
-        {"type": "version", "name": "trueportals", "version": "1.3.1"} // Optional dependency on TruePortals version 1.3.1
+        {"type": "version", "name": "trueportals", "version": "1.3.1"} // Optional dependency on truePortals version 1.3.1
       ],
       "required": [
-        {"type": "project", "name": "mwl"} // Required dependency on MWL project
+        {"type": "project", "name": "mwl"} // Required dependency on mWL project
       ],
       "incompatible": [
-        {"type": "version", "name": "trueportals", "version":  "1.1.0"} // Incompatible version of TruePortals
+        {"type": "version", "name": "trueportals", "version":  "1.1.0"} // Incompatible version of truePortals
       ],
       "embedded": [
-        {"type": "project", "name":  "mwl"} // Embedded dependency on MWL project
+        {"type": "project", "name":  "mwl"} // Embedded dependency on mWL project
       ]
     }
   }
