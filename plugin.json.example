@@ -3,9 +3,14 @@
     "version": 21, // Target java version
     "allow_enhanced_hotswap": true // Enable hot code swapping without restart
   },
+  "plugin": {
+    "name": "PaperPluginTemplate", // Plugin name, that shows in /plugins and JAR filename
+    "version": "1.0.0", // Plugin version, that shows in /plugins and JAR filename
+    "api_version": "1.21" // Minimal required server version
+  },
   "paper": {
     "server_version": "1.21.4", // Version of run server
-    "plugin_version": "1.21.4-R0.1-SNAPSHOT" // Version of Paper API
+    "paper_version": "1.21.4-R0.1-SNAPSHOT", // Version of Paper API
   },
   "modrinth": { // Modrinth publishing options. You need to set MODRINTH_TOKEN environment variable to publish
     "project_id": "paper-plugin-template", // Can be the project ID or the slug
