@@ -27,7 +27,7 @@ repositories {
 
 String paperPaperVersion = readPluginProperty("paper.paper_version", "1.21.4-R0.1-SNAPSHOT")
 String paperServerVersion = readPluginProperty("paper.server_version", "1.21.4")
-def targetJavaVersion = readPluginProperty("java.version", 21) as Integer
+int targetJavaVersion = readPluginProperty("java.version", 21) as Integer
 
 dependencies {
     compileOnly("io.papermc.paper:paper-api:${paperPaperVersion}")
@@ -54,11 +54,13 @@ tasks.withType(JavaCompile).configureEach {
 }
 
 boolean hasEnhancedHotswap = readPluginProperty("java.allow_enhanced_hotswap", true)
+int paperJavaVersion = readPluginProperty("paper.java_version", 21) as Integer
+
 if (hasEnhancedHotswap) {
     tasks.withType(AbstractRun.class).configureEach {
         javaLauncher = javaToolchains.launcherFor {
             vendor = JvmVendorSpec.JETBRAINS
-            languageVersion = JavaLanguageVersion.of(targetJavaVersion)
+            languageVersion = JavaLanguageVersion.of(paperJavaVersion)
         }
         jvmArgs("-XX:+AllowEnhancedClassRedefinition")
     }

@@ -9,6 +9,7 @@
     "api_version": "1.21"
   },
   "paper": {
+    "java_version": 21,
     "server_version": "1.21.4",
     "paper_version": "1.21.4-R0.1-SNAPSHOT"
   },

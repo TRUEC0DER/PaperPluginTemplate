@@ -22,6 +22,7 @@ This repository provides a template for creating Minecraft plugins for the **Pap
     "api_version": "1.21" // Minimal required server version
   },
   "paper": {
+    "java_version": 21, // Test server java version
     "server_version": "1.21.4", // Version of run server
     "paper_version": "1.21.4-R0.1-SNAPSHOT", // Version of Paper API
   },
